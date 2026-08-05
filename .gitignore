@@ -1,0 +1,21 @@
+# Dependencies & Build
+node_modules/
+dist/
+build/
+.vite/
+
+# Environment files & Secrets
+.env
+.env.*
+!.env.example
+*.env
+*.pem
+*.key
+
+# Logs & System files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

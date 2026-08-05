@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/*
+ * HUD.
+ *
+ * Chrome is cyan-on-black; data keeps its own palette. The two never mix: the
+ * accent lives in frames, rings, and glow, and stops at the edge of a chart's
+ * plot area — so a series colour is never competing with the interface.
+ *
+ * Series colours are the dataviz reference palette's dark steps, validated
+ * against --color-panel (#0d1117): lightness band, chroma floor, adjacent CVD
+ * separation, normal-vision floor, and 3:1 contrast all pass.
+ */
+@theme {
+  --color-plane: #04070a;
+  --color-panel: #0d1117;
+  --color-raised: #131a22;
+  --color-sunken: #080c11;
+  --color-grid: rgba(46, 230, 255, 0.05);
+
+  --color-accent: #2ee6ff;
+  --color-accent-dim: #12798c;
+  --color-amber: #ffb020;
+  --color-live: #ff4d4d;
+
+  --color-ink: #e8f6fa;
+  --color-ink-2: #9fb4bd;
+  --color-ink-3: #6b8894;
+  --color-ink-4: #47606b;
+
+  --color-line: rgba(46, 230, 255, 0.16);
+  --color-line-soft: rgba(46, 230, 255, 0.07);
+
+  --color-s1: #3987e5;
+  --color-s2: #d95926;
+  --color-s3: #199e70;
+  --color-s4: #c98500;
+  --color-s5: #d55181;
+  --color-s6: #008300;
+  --color-s7: #9085e9;
+  --color-s8: #e66767;
+
+  --color-good: #0ca30c;
+  --color-warn: #fab219;
+  --color-critical: #d03b3b;
+
+  --font-sans: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
+
+  --animate-scan: scan 7s linear infinite;
+  --animate-rise: rise 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-blink: blink 1.3s steps(2, start) infinite;
+  --animate-materialize: materialize 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes scan {
+  from { background-position: 0 -240px; }
+  to { background-position: 0 100%; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+/* Cards don't fade in — they resolve, like a scope acquiring a target. */
+@keyframes materialize {
+  0% { opacity: 0; transform: translateY(14px) scale(0.985); clip-path: inset(0 0 100% 0); }
+  60% { opacity: 1; clip-path: inset(0 0 0 0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); clip-path: inset(0 0 0 0); }
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--color-plane);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* Panels read as glass over the grid, not as opaque boxes sitting on top of it. */
+@utility glass {
+  background: color-mix(in oklab, var(--color-panel) 78%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-line);
+}
+
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+*::-webkit-scrollbar { width: 7px; height: 7px; }
+*::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 999px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
