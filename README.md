@@ -23,9 +23,19 @@ rusak, walau sebenarnya tidak.
 
 ## Menjalankan
 
-### Cara Cepat (One-Shot Setup Cross-Platform)
+### 1-Liner Setup via `curl` (Tanpa perlu download script file manual)
 
-Jalankan perintah setup 1-kali (support Linux, macOS, dan Windows). Masukkan token ElevenLabs sebagai parameter (opsional):
+**macOS / Ubuntu / Linux (via `curl`):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/cardinusantara/cardi-jarvis/main/install.sh | bash -s -- <ELEVENLABS_API_KEY>
+```
+
+**Windows (via PowerShell `iwr`):**
+```powershell
+iwr -useb https://raw.githubusercontent.com/cardinusantara/cardi-jarvis/main/install.ps1 | iex
+```
+
+### Setup Lokal (Jika repositori sudah di-clone)
 
 ```bash
 # Menggunakan npm:
