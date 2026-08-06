@@ -72,8 +72,12 @@ Write-Host "   Silakan selesaikan login Anthropic / Claude di browser yang terbu
 
 npx -y @anthropic-ai/claude-code login
 
+# 7. Register Background Service
+Write-Host "`n🛠️ Mendaftarkan Cardi Jarvis sebagai Background Service..." -ForegroundColor Yellow
+node scripts/service.mjs install
+
 Write-Host "`n==========================================" -ForegroundColor Cyan
-Write-Host "✨ Setup Selesai! Kamu siap menjalankan aplikasi." -ForegroundColor Green
-Write-Host "   Folder : $(Get-Location)" -ForegroundColor Green
-Write-Host "   Jalankan: npm run dev" -ForegroundColor Green
+Write-Host "✨ Setup Selesai!" -ForegroundColor Green
+Write-Host "🚀 Cardi Jarvis sekarang berjalan otomatis sebagai background service!" -ForegroundColor Green
+Write-Host "🌐 Aplikasi terbuka di http://localhost:5173" -ForegroundColor Green
 Write-Host "==========================================`n" -ForegroundColor Cyan

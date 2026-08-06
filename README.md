@@ -129,8 +129,11 @@ handler mengirim balik ke `/agent` → React merender.
 
 | Perintah | Fungsi |
 |---|---|
-| `npm run setup` | Setup 1-kali (install deps, buat `.env`, login Claude) |
-| `npm run dev` | Server + web dengan watch |
+| `npm run setup` | Setup 1-kali (install deps, buat `.env`, login Claude, & daftarkan service) |
+| `npm run service:install` | Daftarkan & jalankan sebagai background service (auto-start on boot) |
+| `npm run service:uninstall` | Hapus background service |
+| `npm run service:status` | Cek status background service |
+| `npm run dev` | Server + web dengan watch (manual) |
 | `npm run typecheck` | Kedua workspace |
 | `npm run smoke -w server` | Uji SDK terpisah dari plumbing kita |
 | `npm run probe:voice -w server` | Uji STT realtime dan TTS ElevenLabs |

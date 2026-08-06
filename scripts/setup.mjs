@@ -119,9 +119,19 @@ async function main() {
     console.log("\n⚠️ Autentikasi Claude selesai atau dilewati.");
   }
 
+  // 5. Register Background Service
+  console.log("\n🛠️ Mendaftarkan Cardi Jarvis sebagai Background Service...");
+  spawnSync("node", ["scripts/service.mjs", "install"], {
+    cwd: rootDir,
+    stdio: "inherit",
+    shell: process.platform === "win32",
+  });
+
   console.log("\n==========================================");
-  console.log("✨ Setup Selesai! Kamu siap menjalankan aplikasi.");
-  console.log("   Jalankan: npm run dev");
+  console.log("✨ Setup Selesai!");
+  console.log("🚀 Cardi Jarvis sekarang berjalan sebagai background service!");
+  console.log("🌐 Aplikasi terbuka di http://localhost:5173");
+  console.log("   (Tidak perlu lagi menjalankan `npm run dev` manual)");
   console.log("==========================================\n");
 }
 

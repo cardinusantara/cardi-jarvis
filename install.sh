@@ -90,10 +90,16 @@ else
     npx -y @anthropic-ai/claude-code login || true
 fi
 
+# 7. Register Background Service
+echo ""
+echo "🛠️ Mendaftarkan Cardi Jarvis sebagai Background Service..."
+node scripts/service.mjs install
+
 echo ""
 echo "=========================================="
-echo "✨ Setup Selesai! Kamu siap menjalankan aplikasi."
-echo "   Folder : $(pwd)"
-echo "   Jalankan: npm run dev"
+echo "✨ Setup Selesai!"
+echo "🚀 Cardi Jarvis sekarang berjalan otomatis sebagai background service!"
+echo "🌐 Folder : $(pwd)"
+echo "   Status : systemctl --user status cardi-jarvis (Linux) / launchctl (macOS)"
 echo "=========================================="
 echo ""

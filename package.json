@@ -9,6 +9,9 @@
   ],
   "scripts": {
     "setup": "node scripts/setup.mjs",
+    "service:install": "node scripts/service.mjs install",
+    "service:uninstall": "node scripts/service.mjs uninstall",
+    "service:status": "node scripts/service.mjs status",
     "dev": "node scripts/dev.mjs",
     "dev:server": "npm run dev --workspace server",
     "dev:web": "npm run dev --workspace web",
