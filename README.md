@@ -23,14 +23,34 @@ rusak, walau sebenarnya tidak.
 
 ## Menjalankan
 
+### Cara Cepat (One-Shot Setup Cross-Platform)
+
+Jalankan perintah setup 1-kali (support Linux, macOS, dan Windows). Masukkan token ElevenLabs sebagai parameter (opsional):
+
 ```bash
-npm install
-cp .env.example .env     # opsional — tanpa ini pun jalan, suaranya pakai browser
+# Menggunakan npm:
+npm run setup <ELEVENLABS_API_KEY>
+
+# Atau via bash (Linux/macOS):
+./setup.sh <ELEVENLABS_API_KEY>
+
+# Atau via CMD/PowerShell (Windows):
+.\setup.bat <ELEVENLABS_API_KEY>
+```
+
+> **Apa yang dilakukan skrip setup ini secara otomatis?**
+> 1. Menginstall semua dependensi (`npm install`).
+> 2. Menyiapkan file `.env` dengan token ElevenLabs milikmu.
+> 3. Membuka browser secara otomatis untuk autentikasi Claude (`claude auth login`).
+
+Setelah setup selesai, cukup jalankan:
+
+```bash
 npm run dev              # server :8787 + web :5173
 ```
 
 Buka <http://localhost:5173>. Tidak perlu `ANTHROPIC_API_KEY`: SDK memakai kredensial
-Claude Code yang sudah login di mesin ini.
+Claude Code yang sudah diproses saat login.
 
 > ⚠️ Agent berjalan dengan `permissionMode: bypassPermissions` — Claude bisa menulis
 > dan menghapus file **tanpa bertanya**. Arahkan `AGENT_CWD` ke folder kerja, bukan
@@ -99,6 +119,7 @@ handler mengirim balik ke `/agent` → React merender.
 
 | Perintah | Fungsi |
 |---|---|
+| `npm run setup` | Setup 1-kali (install deps, buat `.env`, login Claude) |
 | `npm run dev` | Server + web dengan watch |
 | `npm run typecheck` | Kedua workspace |
 | `npm run smoke -w server` | Uji SDK terpisah dari plumbing kita |
