@@ -25,15 +25,21 @@ if ! command -v npm &> /dev/null; then
     exit 1
 fi
 
-# 2. Clone repo if not inside project folder
+# 2. Clone or Update repository
 if [ -f "package.json" ] && grep -q '"name": "cardi"' package.json 2>/dev/null; then
-    echo "📂 Menggunakan folder proyek saat ini."
+    echo "📂 Menggunakan folder proyek saat ini ($(pwd))."
+    echo "🔄 Memperbarui repositori ke versi terbaru (git pull)..."
+    git pull origin main 2>/dev/null || true
 else
     if [ ! -d "$TARGET_DIR" ]; then
         echo "📥 Meng-clone repository $REPO_URL..."
         git clone "$REPO_URL" "$TARGET_DIR"
+        cd "$TARGET_DIR"
+    else
+        echo "📂 Folder $TARGET_DIR ditemukan. Memperbarui ke versi terbaru..."
+        cd "$TARGET_DIR"
+        git pull origin main 2>/dev/null || true
     fi
-    cd "$TARGET_DIR"
 fi
 
 # 3. Prompt key if not provided as argument
@@ -45,14 +51,10 @@ if [ -z "$ELEVENLABS_KEY" ]; then
     fi
 fi
 
-# 4. Install dependencies if node_modules missing
-if [ ! -d "node_modules" ]; then
-    echo ""
-    echo "📦 Menginstall dependensi (npm install)..."
-    npm install
-else
-    echo "✅ node_modules sudah ditemukan."
-fi
+# 4. Install dependencies
+echo ""
+echo "📦 Memeriksa & menginstall dependensi (npm install)..."
+npm install
 
 # 5. Create or Update .env file
 echo ""
@@ -78,16 +80,30 @@ else
     echo "✅ File .env disiapkan (tanpa key ElevenLabs, menggunakan Web Speech API browser)."
 fi
 
-# 6. Run Claude Code login (Opens Browser for Auth)
+# 6. Check & Run Claude Code login
 echo ""
-echo "🔐 Membuka browser untuk autentikasi Claude..."
-echo "   Silakan selesaikan login Anthropic / Claude di browser yang terbuka."
-echo ""
+echo "🔐 Memeriksa autentikasi Claude..."
 
-if [ -c /dev/tty ]; then
-    npx -y @anthropic-ai/claude-code login < /dev/tty || true
+IS_LOGGED_IN=$(npx -y @anthropic-ai/claude-code auth status 2>/dev/null | grep -o '"loggedIn": true' || true)
+
+if [ -n "$IS_LOGGED_IN" ]; then
+    echo "✅ Claude Code sudah terautentikasi!"
 else
-    npx -y @anthropic-ai/claude-code login || true
+    echo ""
+    echo "========================================================="
+    echo "🔑 AUTENTIKASI CLAUDE CODE"
+    echo "========================================================="
+    echo "👉 Salin (copy) LINK AUTENTIKASI yang muncul di bawah ini,"
+    echo "   lalu buka di browser laptop / HP Anda untuk login."
+    echo "👉 Setelah login, salin kode konfirmasi dan paste di sini."
+    echo "========================================================="
+    echo ""
+
+    if [ -c /dev/tty ]; then
+        npx -y @anthropic-ai/claude-code login < /dev/tty > /dev/tty 2>&1 || true
+    else
+        npx -y @anthropic-ai/claude-code login || true
+    fi
 fi
 
 # 7. Register Background Service
@@ -99,7 +115,6 @@ echo ""
 echo "=========================================="
 echo "✨ Setup Selesai!"
 echo "🚀 Cardi Jarvis sekarang berjalan otomatis sebagai background service!"
-echo "🌐 Folder : $(pwd)"
-echo "   Status : systemctl --user status cardi-jarvis (Linux) / launchctl (macOS)"
+echo "📁 Folder : $(pwd)"
 echo "=========================================="
 echo ""

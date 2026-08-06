@@ -21,15 +21,21 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# 2. Check current directory or clone
+# 2. Clone or Update repository
 if ((Test-Path "package.json") -and (Get-Content "package.json" -Raw | Select-String '"name": "cardi"')) {
-    Write-Host "📂 Menggunakan folder proyek saat ini." -ForegroundColor Green
+    Write-Host "📂 Menggunakan folder proyek saat ini ($(Get-Location))." -ForegroundColor Green
+    Write-Host "🔄 Memperbarui repositori ke versi terbaru (git pull)..." -ForegroundColor Yellow
+    git pull origin main 2>$null
 } else {
     if (-not (Test-Path $TargetDir)) {
         Write-Host "📥 Meng-clone repository $RepoUrl..." -ForegroundColor Yellow
         git clone $RepoUrl $TargetDir
+        Set-Location $TargetDir
+    } else {
+        Write-Host "📂 Folder $TargetDir ditemukan. Memperbarui ke versi terbaru..." -ForegroundColor Yellow
+        Set-Location $TargetDir
+        git pull origin main 2>$null
     }
-    Set-Location $TargetDir
 }
 
 # 3. Prompt ElevenLabs Key if empty
@@ -38,12 +44,8 @@ if ([string]::IsNullOrWhiteSpace($ElevenLabsKey)) {
 }
 
 # 4. Install dependencies
-if (-not (Test-Path "node_modules")) {
-    Write-Host "`n📦 Menginstall dependensi (npm install)..." -ForegroundColor Yellow
-    npm install
-} else {
-    Write-Host "✅ node_modules sudah ditemukan." -ForegroundColor Green
-}
+Write-Host "`n📦 Memeriksa & menginstall dependensi (npm install)..." -ForegroundColor Yellow
+npm install
 
 # 5. Setup .env
 Write-Host "`n⚙️ Menyiapkan file .env..." -ForegroundColor Yellow
@@ -66,11 +68,23 @@ if (-not [string]::IsNullOrWhiteSpace($ElevenLabsKey)) {
     Write-Host "✅ File .env disiapkan (tanpa key ElevenLabs, menggunakan Web Speech API browser)." -ForegroundColor Green
 }
 
-# 6. Claude Auth Login
-Write-Host "`n🔐 Membuka browser untuk autentikasi Claude..." -ForegroundColor Yellow
-Write-Host "   Silakan selesaikan login Anthropic / Claude di browser yang terbuka.`n" -ForegroundColor Yellow
+# 6. Claude Auth Check & Login
+Write-Host "`n🔐 Memeriksa autentikasi Claude..." -ForegroundColor Yellow
+$authStatus = npx -y @anthropic-ai/claude-code auth status 2>$null
 
-npx -y @anthropic-ai/claude-code login
+if ($authStatus -match '"loggedIn": true') {
+    Write-Host "✅ Claude Code sudah terautentikasi!" -ForegroundColor Green
+} else {
+    Write-Host "`n=========================================================" -ForegroundColor Yellow
+    Write-Host "🔑 AUTENTIKASI CLAUDE CODE" -ForegroundColor Yellow
+    Write-Host "=========================================================" -ForegroundColor Yellow
+    Write-Host "👉 Salin (copy) LINK AUTENTIKASI yang muncul di bawah ini," -ForegroundColor Yellow
+    Write-Host "   lalu buka di browser untuk login." -ForegroundColor Yellow
+    Write-Host "👉 Setelah login, salin kode konfirmasi dan paste di sini." -ForegroundColor Yellow
+    Write-Host "=========================================================`n" -ForegroundColor Yellow
+
+    npx -y @anthropic-ai/claude-code login
+}
 
 # 7. Register Background Service
 Write-Host "`n🛠️ Mendaftarkan Cardi Jarvis sebagai Background Service..." -ForegroundColor Yellow

@@ -103,20 +103,36 @@ async function main() {
     console.log("   ELEVENLABS_API_KEY: (kosong - menggunakan Web Speech API browser)");
   }
 
-  // 4. Run Claude Code Auth (Login)
-  console.log("\n🔐 Membuka browser untuk autentikasi Claude...");
-  console.log("   Silakan selesaikan login Anthropic / Claude di browser yang terbuka.\n");
-
-  const authRes = spawnSync("npx", ["-y", "@anthropic-ai/claude-code", "login"], {
+  // 4. Run Claude Code Auth Check & Login
+  console.log("\n🔐 Memeriksa autentikasi Claude...");
+  const statusRes = spawnSync("npx", ["-y", "@anthropic-ai/claude-code", "auth", "status"], {
     cwd: rootDir,
-    stdio: "inherit",
+    encoding: "utf-8",
     shell: process.platform === "win32",
   });
 
-  if (authRes.status === 0) {
-    console.log("\n🎉 Autentikasi Claude berhasil!");
+  if (statusRes.stdout && statusRes.stdout.includes('"loggedIn": true')) {
+    console.log("✅ Claude Code sudah terautentikasi!");
   } else {
-    console.log("\n⚠️ Autentikasi Claude selesai atau dilewati.");
+    console.log("\n=========================================================");
+    console.log("🔑 AUTENTIKASI CLAUDE CODE");
+    console.log("=========================================================");
+    console.log("👉 Salin (copy) LINK AUTENTIKASI yang muncul di bawah ini,");
+    console.log("   lalu buka di browser laptop / HP Anda untuk login.");
+    console.log("👉 Setelah login, salin kode konfirmasi dan paste di sini.");
+    console.log("=========================================================\n");
+
+    const authRes = spawnSync("npx", ["-y", "@anthropic-ai/claude-code", "login"], {
+      cwd: rootDir,
+      stdio: "inherit",
+      shell: process.platform === "win32",
+    });
+
+    if (authRes.status === 0) {
+      console.log("\n🎉 Autentikasi Claude berhasil!");
+    } else {
+      console.log("\n⚠️ Autentikasi Claude selesai atau dilewati.");
+    }
   }
 
   // 5. Register Background Service
